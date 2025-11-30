@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merumi | Panel de Administración</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+
+        body {
+            background-image: url('../imagenes/mesa3.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            background-color: #001a33;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        header img {
+            height: 70px;
+            object-fit: contain;
+        }
+
+        #cerrarSesion {
+            background-color: #b22222;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        #cerrarSesion:hover { background-color: #a11a1a;
+        }
+
+        nav {
+            width: 100%;
+            background: #011930;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 40px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        h1 { margin: 30px 0 15px 0;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .plano {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 20px;
+            background-color: rgba(16, 47, 71, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+        }
+
+        .mesa {
+            background-color: #1f4e6d;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+            user-select: none;
+        }
+
+        .mesa:hover { transform: scale(1.05);
+        }
+        .disponible { background-color: #1e7d32;
+        } /* verde */
+        .reservado { background-color: #b85c00;
+        }  /* naranja */
+
+        .mesa img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 5px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column; 
+            align-items: center; 
+            width: 300px; 
+            gap: 15px;
+        }
+        
+        #mensajePanel {
+            background-color: rgba(31, 78, 109, 0.95);
+            border-radius: 10px;
+            padding: 8px;
+            width: 100%;
+            color: #f5f5f5;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            line-height: 1.3;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        #seleccionFechaTurno {
+            background-color: rgba(31,78,109,0.95);
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            text-align: left;
+            display: block;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        #seleccionFechaTurno label, #infoMesa label {
+            display:block;
+            margin-top:8px;
+            font-size:0.9rem;
+        }
+
+        #seleccionFechaTurno input[type="date"], #seleccionFechaTurno select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #infoMesa {
+            background-color: rgba(31,78,109,0.95);
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            display: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .reserva-panel {
+            background-color: rgba(31,78,109,0.95);
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .reserva-panel h3 {
+            margin-bottom: 15px;
+        }
+
+        .opcion-botones {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .opcion-botones button {
+            width: 100%;
+            padding: 12px;
+        }
+
+        #btnReservarAdmin { background-color: #007bff;
+        }
+        #btnReservarAdmin:hover { background-color: #0056b3;
+        }
+
+        #btnElegirCliente { background-color: #28a745;
+        }
+        #btnElegirCliente:hover { background-color: #1e7e34;
+        }
+
+        #infoReservaCliente input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            color: #333;
+        }
+
+        #infoReservaCliente label {
+            display: block;
+            margin-top: 8px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        #btnCrearReservaCliente {
+            width: 100%;
+            background-color: #00b894;
+        }
+
+
+        #infoMesa h2 { margin-bottom: 10px;
+        }
+        #infoMesa p { margin: 6px 0;
+        }
+        #infoMesa label { display:block; margin-top:8px; text-align:left; font-size:0.9rem;
+        }
+.btn-crear {
+    margin-top: 25px;
+    padding: 12px 20px;
+    background-color: #1A3A6D;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-crear:hover {
+    background-color: #29528f;
+}
+
+        button {
+            background-color: #00b894;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover { background-color: #009e7d;
+        }
+
+        section#mesas {
+            margin-top: 30px;
+            background-color: rgba(16, 47, 71, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            display: block;
+        }
+
+        section#reservas {
+            margin-top: 30px;
+            background-color: rgba(16, 47, 71, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            width: 85%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            display: none;
+        }
+        
+section#clientes {
+    background-color: rgba(16, 47, 71, 0.95);
+     border-radius: 15px;
+        max-width: 900px; /* Asegura un ancho suficiente para 3 tarjetas */
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        padding: 20px;
+        display: none;
+        width: 95%; /* Usar más ancho en caso de pantallas pequeñas */
+    }
+#listaClientes {
+        text-align: center; /* Centra los elementos inline-block */
+    }
+    section#admins {
+    background-color: rgba(16, 47, 71, 0.95);
+    border-radius: 15px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding: 20px;
+    display: none;
+    width: 95%;
+}
+
+        /* ----------------------------------------------------- */
+        /* 🎨 MODIFICACIONES CSS PARA TARJETAS MÁS COMPACTAS 🎯 */
+        /* ----------------------------------------------------- */
+
+        .cliente-card {
+display: inline-block; /** CAMBIO PARA LAYOUT 3X3 (Usa el que funciona) **/
+background-color: #123450;
+ border-radius: 10px;
+padding: 10px 20px;
+margin: 10px;
+width: 250px; /* Ancho fijo para que el cálculo sea consistente */
+text-align: left;
+ }
+      .reserva-card {
+    display: block; /* o simplemente eliminar 'display' */
+    background-color: #123450;
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin: 10px;
+    width: 250px;
+    text-align: left;
+}
+  
+        .cliente-card p, .reserva-card p {
+            margin: 3px 0;
+            /* **REDUCIDO** el margen vertical entre líneas */
+            font-size: 0.95rem;
+        }
+
+        .cliente-card p strong, .reserva-card p strong {
+            font-weight: bold;
+            color: #00b894; /* Color de énfasis para la etiqueta */
+            margin-right: 5px;
+            display: inline; /* Vuelve al comportamiento inline */
+        }
+        
+        /* Contenedor de botones en tarjeta de clientes */
+        .cliente-acciones {
+            display: flex;
+            gap: 8px; /* Espacio entre los botones */
+            margin-top: 10px;
+            /* Margen superior para separarse de los datos */
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+       .cliente-card button { margin: 5px 5px 0 0; }
+        .cliente-acciones button { 
+            /* Estilo para todos los botones dentro de cliente-card/cliente-acciones */
+            background-color: #00b894;
+            /* Color por defecto, sobrescribido si hay clases específicas */
+            color: white;
+            border: none;
+            padding: 6px 10px; /* **REDUCIDO** el padding para botones más chicos */
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem; /* Fuente más pequeña */
+            flex-grow: 1;
+            /* Para que se repartan el ancho */
+            margin-top: 0;
+            /* Asegura que no tenga el margin-top general de button */
+        }
+
+        /* Estilos específicos para los botones de la tarjeta de cliente */
+        .cliente-acciones .btn-eliminar {
+            background-color: #e74c3c;
+        }
+        
+        .cliente-acciones .btn-editar:hover { background-color: #009e7d;
+        }
+        .cliente-acciones .btn-eliminar:hover { background-color: #c0392b;
+        }
+        
+        /* Estilos adicionales para distinguir reservas de clientes externos */
+        .reserva-card.tipo-cliente {
+            border: 2px solid #ffc107;
+            background-color: #1a4369;
+        }
+        
+        .reserva-card button {
+            background-color: #e74c3c;
+            /* Mantener el tamaño compacto para los botones de reservas */
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .reserva-card button:hover {
+            background-color: #c0392b;
+        }
+        /* CONTENEDOR DEL BLOQUE DE TURNO */
+.turno-contenedor {
+    display: grid;
+    grid-template-columns: 100px 1fr;  /* IZQUIERDA título / DERECHA reservas */
+    align-items: start;
+    gap: 20px;
+    margin: 15px 0 35px 0;
+}
+
+/* TITULO DEL LADO IZQUIERDO */
+.turno-titulo {
+    font-weight: bold;
+    font-size: 16px;   /* más chico */
+    color: #ffffff;    /* blanco */
+    text-align: left;
+}
+
+
+/* DONDE VAN LAS TARJETAS – GRID DE A 2 */
+.turno-reservas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* TARJETAS (las estás usando ya, pero agrego por si acaso) */
+.reserva-card {
+    background-color: rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+ 
+.contenedor-crear-admin {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.contenedor-crear-admin button {
+    padding: 10px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #00b894;
+    color: white;
+    cursor: pointer;
+}
+
+.contenedor-crear-admin button:hover {
+    background-color: #00b894;
+}
+
+
+        footer {
+            margin-top: 50px;
+            color: #8ca2c0;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 850px) {
+            section#mesas { max-width: 95%;
+            padding: 10px; }
+            .main-container { flex-direction: column; align-items: center;
+            }
+            .plano, #seleccionFechaTurno, #infoMesa, .reserva-panel { width: 95%;
+            max-width: 450px; }
+            .plano { grid-template-columns: repeat(3, 100px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="../imagenes/banner1.0.png" alt="Merumi">
+        <button id="cerrarSesion">Cerrar sesión</button>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#" onclick="mostrarSeccion('mesas')">Ver Mesas</a></li>
+            <li><a href="#" onclick="mostrarSeccion('reservas')">Reservas</a></li>
+            <li><a href="#" onclick="mostrarSeccion('clientes')">Clientes Registrados</a></li>
+            <li><a href="#" onclick="mostrarSeccion('admins')">Administradores Registrados</a></li>
+
+        </ul>
+    </nav>
+
+    <h1>Panel del Administrador</h1>
+
+    <section id="mesas">
+        <div class="main-container">
+            <div class="plano" id="contenedorMesas"></div>
+
+            <div class="sidebar">
+                
+                <div id="mensajePanel">
+                    Seleccione fecha y turno para ver mesas disponibles
+                </div>
+
+                <div id="seleccionFechaTurno">
+                    <label for="fecha">Fecha de reserva</label>
+                    <input type="date" id="fecha" />
+
+                    <label for="turno">Turno</label>
+                    <select id="turno">
+                        <option value="">Seleccione turno</option>
+                    </select>
+                </div>
+
+                <div id="infoMesa" class="reserva-panel">
+                    <h3>Información de la Mesa</h3>
+                    <p id="numeroMesa"></p>
+                    <p id="estadoMesa"></p>
+                    <p id="capacidad"></p>
+                    <button id="btnReservar">Reservar</button>
+                </div>
+                
+                <div id="opcionesReserva" class="reserva-panel">
+                    <h3 class="reserva-pregunta">¿Quién realiza la reserva?</h3>
+                    <div class="opcion-botones">
+                        <button id="btnReservarAdmin" class="opcion-admin">ADMINISTRACIÓN (Junta)</button>
+                        <button id="btnElegirCliente" class="opcion-cliente">CLIENTE (Llamada/Presencial)</button>
+                    </div>
+                </div>
+
+                <div id="infoReservaCliente" class="reserva-panel">
+                    <h3>Datos del Cliente</h3>
+                    <label for="nombreCliente">Nombre</label>
+                    <input type="text" id="nombreCliente" placeholder="Nombre completo del cliente">
+                
+                    <label for="telefonoCliente">Teléfono</label>
+                    <input type="text" id="telefonoCliente" placeholder="Teléfono/Celular">
+                    
+                    <button id="btnCrearReservaCliente">Crear Reserva Cliente</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    
+    <section id="reservas">
+    <h2>Reservas del día</h2>
+
+    <div style="margin-bottom:20px; text-align:center;">
+    <label style="font-weight:bold;">Seleccionar fecha:</label>
+    <input type="date" id="fechaReservaFiltro" />
+
+    <button id="btnVerHoy">Hoy</button>
+    <button id="btnVerMes">Todo el mes</button>
+    <button id="btnMasFiltros">Más filtros</button> </div>
+<div id="filtrosAvanzados" style="display:none; text-align:center; padding:10px; border:1px solid #1f4e6d; border-radius:10px; max-width:500px; margin: 10px auto;">
+    <h4 style="margin-bottom: 10px; color:#00b894;">Filtros Avanzados</h4>
+    
+    
+    <div style="display: flex; justify-content: center; gap: 15px;">
+        <div>
+            <label for="fechaDesde" style="font-weight:bold; display:block;">Fecha Desde:</label>
+            <input type="date" id="fechaDesde">
+        </div>
+        <div>
+            <label for="fechaHasta" style="font-weight:bold; display:block;">Fecha Hasta:</label>
+            <input type="date" id="fechaHasta">
+        </div>
+    </div>
+    
+    
+</div>
+<br><br>
+  
+    <h3 style="color:#00b894;">Clientes</h3>
+    
+<div class="turno-contenedor">
+    <div class="turno-titulo">Almuerzo</div>
+    <div id="clientesAlmuerzo" class="turno-reservas"></div>
+</div>
+
+<div class="turno-contenedor">
+    <div class="turno-titulo">Cena</div>
+    <div id="clientesCena" class="turno-reservas"></div>
+</div>
+
+    <br><br>
+
+    <h3 style="color:#00b894;">Administración</h3>
+
+    
+<div class="turno-contenedor">
+    <div class="turno-titulo">Almuerzo</div>
+    <div id="adminAlmuerzo" class="turno-reservas"></div>
+</div>
+
+<div class="turno-contenedor">
+    <div class="turno-titulo">Cena</div>
+    <div id="adminCena" class="turno-reservas"></div>
+</div>
+
+</section>
+
+
+<section id="clientes">
+    <h2>Clientes Registrados</h2>
+    <div id="listaClientes"></div>
+</section>
+
+<section id="admins">
+    <h2>Administradores Registrados</h2>
+    <div id="listaAdmins"></div>
+    <div class="contenedor-crear-admin">
+        <button onclick="irCrearAdmin()">Crear admin</button>
+    </div>
+</section>
+
+
+    <footer>© 2025 - Merumi |
+        Administración</footer>
+        
+
+    <script>
+        const imagenMesa = "../imagenes/mesalogo.png";
+
+        let mesas = [];
+        let mesaSeleccionada = null;
+        let clientes = []; // Variable global para almacenar los clientes de la BD
+        let admins = [];
+
+        const contenedor = document.getElementById("contenedorMesas");
+        const info = document.getElementById("infoMesa");
+        const numeroMesa = document.getElementById("numeroMesa");
+        const estadoMesa = document.getElementById("estadoMesa");
+        const capacidad = document.getElementById("capacidad");
+        const btnReservar = document.getElementById("btnReservar");
+
+        const selectTurno = document.getElementById("turno");
+        const inputFecha = document.getElementById("fecha");
+        const listaReservas = document.getElementById("listaReservas");
+        const listaClientes = document.getElementById("listaClientes"); 
+
+        // Variables para los paneles de reserva
+        const opcionesReserva = document.getElementById("opcionesReserva");
+        const infoReservaCliente = document.getElementById("infoReservaCliente");
+        const btnReservarAdmin = document.getElementById("btnReservarAdmin");
+        const btnElegirCliente = document.getElementById("btnElegirCliente");
+        const btnCrearReservaCliente = document.getElementById("btnCrearReservaCliente");
+        const inputNombreCliente = document.getElementById("nombreCliente");
+        const inputTelefonoCliente = document.getElementById("telefonoCliente");
+
+
+        // Cargar turnos desde DB (usa ../php/listarTurnos.php)
+        async function cargarTurnos() {
+            try {
+                const res = await fetch("../php/listarTurnos.php");
+                const data = await res.json();
+
+                // limpia y agrega opciones
+                selectTurno.innerHTML = '<option value="">Seleccione turno</option>';
+                data.forEach(t => {
+                    const id = t.id_turnos ?? t.id_turno ?? t.id;
+                    const txt = (t.nombre ?? ("Turno " + id)) + (t.inicio_hora ? ` (${t.inicio_hora.slice(0,5)} - ${t.fin_hora.slice(0,5)})` : '');
+                    const opt = document.createElement("option");
+                    opt.value = id;
+                    opt.textContent = txt;
+                    selectTurno.appendChild(opt);
+                });
+            } catch (e) {
+                selectTurno.innerHTML = '<option value="">Error cargando turnos</option>';
+            }
+        }
+        
+        // --- FUNCIONES DE CLIENTES (CONECTADAS A LA BASE DE DATOS) ---
+        
+        async function cargarClientes() {
+            try {
+                const res = await fetch("../php/listarClientes.php");
+                if (!res.ok) throw new Error("Error al obtener datos del servidor.");
+                
+                const data = await res.json();
+                
+                if (Array.isArray(data)) {
+                    clientes = data; 
+                    return true;
+                } else {
+                    console.error("Respuesta inesperada del servidor:", data);
+                    listaClientes.innerHTML = "<p>El servidor devolvió un formato de datos inesperado.</p>";
+                    return false;
+                }
+            } catch (e) {
+                console.error("Error al cargar clientes", e);
+                listaClientes.innerHTML = "<p>Error al cargar clientes. Asegúrate de que **listarClientes.php** exista y esté bien configurado.</p>";
+                clientes = []; 
+                return false;
+            }
+        }
+
+
+        // Mostrar clientes con el formato compacto
+        async function mostrarClientes() {
+            listaClientes.innerHTML = "<p>Cargando clientes...</p>";
+            const cargadoExitoso = await cargarClientes();
+
+            if (!cargadoExitoso) return;
+
+            listaClientes.innerHTML = "";
+
+            if (clientes.length === 0) {
+                listaClientes.innerHTML = "<p>No hay clientes registrados.</p>";
+                return;
+            }
+
+            clientes.forEach((c) => {
+                const div = document.createElement("div");
+                div.classList.add("cliente-card");
+                
+                const cardContent = document.createElement("div");
+                
+                cardContent.innerHTML = `
+                    <p><strong>Nombre:</strong> ${c.nombre}</p>
+                    <p><strong>Mail:</strong> ${c.email}</p>
+                    <p><strong>Teléfono:</strong> ${c.celular}</p>
+                `;
+                
+                div.appendChild(cardContent);
+                
+                const accionesDiv = document.createElement("div");
+                accionesDiv.classList.add("cliente-acciones");
+                
+                // Las funciones editarCliente y eliminarCliente ahora llaman a la lógica de la BD
+                accionesDiv.innerHTML = `
+                    <button class="btn-editar" onclick="editarCliente('${c.id_usuario}', '${c.nombre}', '${c.email}', '${c.celular}')">Editar</button>
+                    <button class="btn-eliminar" onclick="eliminarCliente('${c.id_usuario}', '${c.nombre}')">Eliminar</button>
+                `;
+                div.appendChild(accionesDiv);
+                
+                listaClientes.appendChild(div);
+            });
+        }
+
+        // --- FUNCIONES DE ACCIÓN: ELIMINAR Y EDITAR REALES ---
+
+        async function editarCliente(id_usuario, nombre_actual, email_actual, celular_actual) {
+            // Recoger nuevos datos usando prompt (se podría usar un modal más elaborado)
+            const nuevoNombre = prompt(`Nuevo nombre para ${nombre_actual}:`, nombre_actual);
+            if (nuevoNombre === null) return; // Cancelado
+
+            const nuevoMail = prompt(`Nuevo email para ${nombre_actual}:`, email_actual);
+            if (nuevoMail === null) return; // Cancelado
+
+            const nuevoCelular = prompt(`Nuevo celular para ${nombre_actual}:`, celular_actual);
+            if (nuevoCelular === null) return; // Cancelado
+            
+            // Usar FormData para enviar los datos por POST (como espera editarCliente.php)
+            const formData = new FormData();
+            formData.append("id_usuario", id_usuario);
+            formData.append("nombre", nuevoNombre.trim());
+            formData.append("email", nuevoMail.trim());
+            formData.append("celular", nuevoCelular.trim());
+
+            try {
+                const res = await fetch("../php/editarCliente.php", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await res.json();
+                
+                if (data.success) {
+                    alert(`Cliente ${nuevoNombre} actualizado correctamente.`);
+                    mostrarClientes(); // Recargar la lista
+                } else {
+                    alert("Error al actualizar: " + (data.message || "Error desconocido."));
+                }
+            } catch (e) {
+                alert("Error de conexión con el servidor al intentar editar.");
+                console.error(e);
+            }
+        }
+
+
+        async function eliminarCliente(id_usuario, nombre_cliente) {
+            if (!confirm(`¿Está seguro que desea eliminar a ${nombre_cliente} (ID: ${id_usuario})? Esta acción es irreversible.`)) {
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append("id_usuario", id_usuario);
+
+            try {
+                const res = await fetch("../php/eliminarCliente.php", {
+                    method: "POST",
+                    body: formData
+                });
+                
+                const data = await res.json();
+
+                if (data.success) {
+                    alert(`Cliente ${nombre_cliente} eliminado con éxito.`);
+                    mostrarClientes(); // Recargar la lista
+                } else {
+                    alert("Error al eliminar: " + (data.message || "No se pudo eliminar."));
+                }
+            } catch (e) {
+                alert("Error de conexión con el servidor al intentar eliminar.");
+                console.error(e);
+            }
+        }
+
+        // --- FIN FUNCIONES DE CLIENTES ---
+
+        // Cargar todas las mesas en modo inicial (todas verdes)
+        async function cargarMesasIniciales() {
+            try {
+                const res = await fetch("../php/listarMesas.php");
+                const data = await res.json();
+
+                mesas = data.map(m => ({ ...m, estado: 'libre' }));
+                renderizarMesas();
+            } catch (e) {
+                console.error("Error al cargar mesas iniciales", e);
+            }
+        }
+
+        // Cargar mesas según fecha + turno
+        async function cargarMesasFiltradas() {
+            const fecha = inputFecha.value;
+            const id_turno = selectTurno.value;
+
+            if (!fecha || !id_turno) {
+                cargarMesasIniciales();
+                return;
+            }
+
+            try {
+                const res = await fetch(`../php/listarMesas.php?fecha=${encodeURIComponent(fecha)}&id_turno=${encodeURIComponent(id_turno)}`);
+                const data = await res.json();
+
+                // mapear estados del backend a clases CSS
+                mesas = data.map(m => {
+                    const est = (m.estado ?? '').toString().toLowerCase();
+                    const clase = (est === 'libre' || est === 'disponible') ? 'disponible' : 'reservado';
+                    return { ...m, _clase: clase, estado: est };
+                });
+                renderizarMesas();
+                // Ocultar paneles de información/reserva al cargar nuevos filtros
+                info.style.display = "none";
+                opcionesReserva.style.display = "none";
+                infoReservaCliente.style.display = "none";
+            } catch (e) {
+                console.error("Error al cargar mesas filtradas", e);
+            }
+        }
+
+        // Renderizar mesas en el grid
+        function renderizarMesas() {
+            contenedor.innerHTML = "";
+            mesas.forEach(m => {
+                const div = document.createElement("div");
+                div.className = "mesa";
+
+                const classeVisual = m._clase ?? ((m.estado && m.estado.toLowerCase() === 'libre') ? 'disponible' : 'reservado');
+                div.classList.add(classeVisual);
+
+                // contenido
+                div.innerHTML = `
+                    <img src="${imagenMesa}" alt="Mesa ${m.nombre}">
+                    <span>Mesa ${m.nombre}</span>
+                `;
+
+                div.addEventListener("click", () => mostrarInfo(m));
+                
+                if (classeVisual === 'reservado') {
+                    div.style.cursor = "pointer";
+                }
+
+                contenedor.appendChild(div);
+            });
+        }
+
+        function mostrarInfo(mesa) {
+            mesaSeleccionada = mesa;
+            opcionesReserva.style.display = "none";
+            infoReservaCliente.style.display = "none";
+            info.style.display = "flex";
+
+            const estadoVisual = (mesa.estado || 'libre').toLowerCase();
+            const fechaSeleccionada = inputFecha.value;
+            const turnoSeleccionado = selectTurno.value;
+            const filtrosCompletos = fechaSeleccionada && turnoSeleccionado;
+
+            numeroMesa.textContent = `Mesa: ${mesa.nombre}`;
+            capacidad.textContent = `Capacidad: ${mesa.capacidad ?? '-' } personas`;
+
+            if ((estadoVisual === 'libre' || estadoVisual === 'disponible') && filtrosCompletos) {
+                estadoMesa.textContent = `Estado: Disponible`;
+                btnReservar.style.display = "block";
+                btnReservar.textContent = "Reservar";
+                btnReservar.disabled = false;
+            } else {
+                estadoMesa.textContent = `Estado: ${!filtrosCompletos ? 'Seleccione filtros' : 'Reservada'}`;
+                btnReservar.style.display = "none";
+                btnReservar.disabled = true;
+            }
+        }
+
+        function mostrarOpcionesReserva() {
+            info.style.display = "none";
+            opcionesReserva.style.display = "flex";
+            infoReservaCliente.style.display = "none";
+        }
+
+        function mostrarFormularioCliente() {
+            opcionesReserva.style.display = "none";
+            infoReservaCliente.style.display = "flex";
+            inputNombreCliente.value = '';
+            inputTelefonoCliente.value = '';
+        }
+
+
+        async function reservarMesa(tipo) {
+            if (!mesaSeleccionada) return;
+            const fecha = inputFecha.value;
+            const id_turno = selectTurno.value;
+
+            if (!fecha || !id_turno) { alert("Seleccione fecha y turno."); return;
+            }
+
+            let nombre_cliente = null;
+            let telefono_cliente = null;
+            if (tipo === 'cliente') {
+                nombre_cliente = inputNombreCliente.value.trim();
+                telefono_cliente = inputTelefonoCliente.value.trim();
+
+                if (!nombre_cliente || !telefono_cliente) {
+                    alert("Debe ingresar el nombre y el teléfono del cliente externo.");
+                    return;
+                }
+            }
+            
+            const btnActual = (tipo === 'admin') ? btnReservarAdmin : btnCrearReservaCliente;
+            btnActual.disabled = true;
+            btnActual.textContent = "Procesando...";
+
+            const payload = {
+                id_mesa: mesaSeleccionada.id_mesa ?? mesaSeleccionada.id_mesas ?? mesaSeleccionada.id,
+                fecha: fecha,
+                id_turno: parseInt(id_turno),
+                tipo_reserva: tipo, // 'admin' o 'cliente'
+                nombre_externo: nombre_cliente,
+                telefono_externo: telefono_cliente
+            };
+
+            try {
+                const res = await fetch("../php/crearReserva.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const json = await res.json();
+                if (json.success) {
+                    alert(`Reserva (${tipo.toUpperCase()}) creada correctamente.`);
+                    inputNombreCliente.value = '';
+                    inputTelefonoCliente.value = '';
+                    
+                    cargarMesasFiltradas();
+                    mostrarSeccion("mesas");
+                } else {
+                    alert("Error: " + (json.error || json.message || "No se pudo crear la reserva."));
+                    cargarMesasFiltradas();
+                }
+            } catch (e) {
+                console.error("Error al reservar", e);
+                alert("Error de conexión.");
+            } finally {
+                btnActual.disabled = false;
+                btnActual.textContent = (tipo === 'admin') ? "ADMINISTRACIÓN (Junta)" : "Crear Reserva Cliente";
+            }
+        }
+        
+        // Muestra TODAS las reservas (ADMIN/CLIENTES)
+
+// ----------------------
+// ---------- Reemplazo / Mejora de cargarReservas ----------
+async function cargarReservas(filter = "hoy", extra = null) {
+    let url = "../php/listarReservasFiltro.php";
+    let params = new URLSearchParams();
+
+    // Soportar si el llamador pasó un objeto en vez de (string, extra)
+    if (typeof filter === 'object' && filter !== null) {
+        // { desde, hasta, mes, fecha } esperado
+        if (filter.mes) {
+            params.set('filtro', 'mes');
+            params.set('mes', filter.mes);
+        } else if (filter.desde && filter.hasta) {
+            params.set('filtro', 'rango');
+            params.set('desde', filter.desde);
+            params.set('hasta', filter.hasta);
+        } else if (filter.fecha) {
+            params.set('filtro', 'fecha');
+            params.set('fecha', filter.fecha);
+        } else {
+            params.set('filtro', 'hoy');
+        }
+    } else {
+        // filter es string
+        const f = (filter || 'hoy').toString();
+        params.set('filtro', f);
+
+        if (f === 'fecha' && extra) params.set('fecha', extra);
+        if (f === 'mes' && extra) params.set('mes', extra);
+        if (f === 'rango' && extra && extra.desde && extra.hasta) {
+            params.set('desde', extra.desde);
+            params.set('hasta', extra.hasta);
+        }
+    }
+
+    // Construimos URL final
+    url += '?' + params.toString();
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        // same rendering code que ya tenías:
+        const clientesAlmuerzo = document.getElementById("clientesAlmuerzo");
+        const clientesCena     = document.getElementById("clientesCena");
+        const adminAlmuerzo    = document.getElementById("adminAlmuerzo");
+        const adminCena        = document.getElementById("adminCena");
+
+        clientesAlmuerzo.innerHTML = "";
+        clientesCena.innerHTML     = "";
+        adminAlmuerzo.innerHTML    = "";
+        adminCena.innerHTML        = "";
+
+        data.forEach(reserva => {
+            const nombreFinal = reserva.nombre_usuario || reserva.nombre_externo || "Cliente externo";
+            const div = document.createElement("div");
+            div.classList.add("reserva-card");
+
+            const hoy = new Date().toISOString().split("T")[0];
+
+            let botonCancelar = "";
+            if (reserva.fecha >= hoy) {
+                botonCancelar = `<button onclick="cancelarReserva(${reserva.id_reserva}, ${reserva.id_mesa})">Cancelar Reserva</button>`;
+            }
+
+            div.innerHTML = `
+                <p><strong>Mesa:</strong> ${reserva.nombre_mesa}</p>
+                <p><strong>Fecha:</strong> ${reserva.fecha}</p>
+                <p><strong>Turno:</strong> ${reserva.nombre_turno}</p>
+                <p><strong>Cliente:</strong> ${nombreFinal}</p>
+                ${ reserva.telefono_externo ? `<p><strong>Tel:</strong> ${reserva.telefono_externo}</p>` : "" }
+                ${botonCancelar}
+            `;
+
+            const turnoNombre = (reserva.nombre_turno || "").toLowerCase();
+
+            const esExterno = reserva.id_usuario === null;
+            const esClienteReg = reserva.id_tipo_persona == 1;
+            const esAdmin = reserva.id_tipo_persona == 2;
+
+            if (esExterno || esClienteReg) {
+                if (turnoNombre.includes("almuerzo")) clientesAlmuerzo.appendChild(div);
+                else clientesCena.appendChild(div);
+                return;
+            }
+
+            if (esAdmin) {
+                if (turnoNombre.includes("almuerzo")) adminAlmuerzo.appendChild(div);
+                else adminCena.appendChild(div);
+            }
+        });
+
+        if (clientesAlmuerzo.innerHTML === "") clientesAlmuerzo.innerHTML = "<p>No hay reservas.</p>";
+        if (clientesCena.innerHTML === "") clientesCena.innerHTML = "<p>No hay reservas.</p>";
+        if (adminAlmuerzo.innerHTML === "") adminAlmuerzo.innerHTML = "<p>No hay reservas.</p>";
+        if (adminCena.innerHTML === "") adminCena.innerHTML = "<p>No hay reservas.</p>";
+    } catch (err) {
+        console.error("Error al cargar reservas:", err);
+    }
+}
+// ---------- fin cargarReservas mejorada ----------
+
+
+// ---------- Botón rango que creaste: insertarlo en el DOM ----------
+const filtrosCont = document.getElementById('filtrosAvanzados');
+if (filtrosCont) {
+    // si el btnAplicarRango ya existe en tu código (lo creaste), insertalo:
+    try {
+        filtrosCont.appendChild(btnAplicarRango);
+    } catch(e) {
+        // si btnAplicarRango no está en alcance porque moviste el código, podés crear uno simple:
+        if (!document.getElementById('btnAplicarRango')) {
+            const b = document.createElement('button');
+            b.id = 'btnAplicarRango';
+            b.textContent = 'Aplicar Rango';
+            b.style.marginTop = '15px';
+            filtrosCont.appendChild(b);
+            b.addEventListener('click', () => {
+                const desde = document.getElementById("fechaDesde").value;
+                const hasta = document.getElementById("fechaHasta").value;
+                if (desde && hasta) {
+                    cargarReservas({ desde: desde, hasta: hasta });
+                } else {
+                    alert("Por favor, ingrese ambas fechas: Desde y Hasta.");
+                }
+            });
+        }
+    }
+}
+
+function irCrearAdmin() {
+    window.location.href = "../inicio/RegistAdm.html";
+}
+
+
+// ---------- Arreglos a listeners existentes: pasar strings en lugar de objetos ----------
+const fechaReservaFiltroElem = document.getElementById("fechaReservaFiltro");
+if (fechaReservaFiltroElem) {
+    fechaReservaFiltroElem.removeEventListener?.('change', ()=>{}); // seguridad
+    fechaReservaFiltroElem.addEventListener("change", (e) => {
+        const fecha = e.target.value;
+        if (fecha) cargarReservas('fecha', fecha); // antes pasabas un objeto
+    });
+}
+
+
+
+//////////////////////
+/////////////////////////
+
+
+
+
+        // Cancelar reserva (No modificado)
+        function cancelarReserva(id_reserva, id_mesa) {
+            if (!confirm("¿Está seguro que desea cancelar la reserva?")) return;
+            const formData = new FormData();
+            formData.append("id_reserva", id_reserva);
+            formData.append("id_mesa", id_mesa);
+
+            fetch("../php/cancelarReservaAdm.php", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Reserva cancelada con éxito.");
+                        mostrarTodasReservas();
+                        mostrarSeccion("mesas");
+                        cargarMesasFiltradas();
+                    } else {
+                        alert("Error: " + (data.message || "No se pudo cancelar."));
+                    }
+                })
+                .catch(() => alert("Error en el servidor."));
+        }
+
+        // Cerrar sesión (No modificado)
+        document.getElementById("cerrarSesion").addEventListener("click", () => {
+            if (!confirm("¿Seguro que desea cerrar sesión?")) return;
+
+            fetch("../php/cerrarSesion.php")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = "../inicio/iniciarSesion.html";
+                    } else {
+                        alert("Error al cerrar sesión.");
+                    }
+                })
+                .catch(() => alert("Error al conectar con el servidor."));
+        });
+        
+        // Mostrar/ocultar secciones (Actualizada para manejar 'clientes')
+        function mostrarSeccion(id) {
+            document.querySelectorAll("section").forEach(s => s.style.display = "none");
+            const seccion = document.getElementById(id);
+            if(seccion) {
+                seccion.style.display = "block";
+            } else {
+                console.warn(`Sección con ID '${id}' no encontrada.`);
+                return;
+            }
+
+
+            if (id === "mesas") {
+                cargarTurnos();
+                cargarMesasIniciales();
+                info.style.display = "none";
+                opcionesReserva.style.display = "none";
+                infoReservaCliente.style.display = "none";
+                mesaSeleccionada = null;
+            }
+            if (id === "reservas") {
+                cargarReservas("hoy"); 
+                llenarSelectMeses();
+            }
+            if (id === "clientes") {
+                mostrarClientes(); // Llama a la función que ahora usa la BD
+            }
+            if (id === "admins") {
+                mostrarAdmins();
+}
+
+        }
+
+        // Listeners para cambios de fecha/turno -> filtrar
+        inputFecha.addEventListener("change", cargarMesasFiltradas);
+        selectTurno.addEventListener("change", cargarMesasFiltradas);
+        
+        // Listeners para la lógica de reserva
+        btnReservar.addEventListener("click", mostrarOpcionesReserva); 
+        btnReservarAdmin.addEventListener("click", () => reservarMesa('admin'));
+        btnElegirCliente.addEventListener("click", mostrarFormularioCliente);
+        btnCrearReservaCliente.addEventListener("click", () => reservarMesa('cliente'));
+        
+// --- NUEVOS LISTENERS ---
+document.getElementById("btnMasFiltros").addEventListener("click", () => {
+    const filtrosAvanzados = document.getElementById("filtrosAvanzados");
+    // Alternar la visibilidad del contenedor de filtros avanzados
+    if (filtrosAvanzados.style.display === "none") {
+        filtrosAvanzados.style.display = "block";
+    } else {
+        filtrosAvanzados.style.display = "none";
+    }
+});
+// --- LISTENERS MODIFICADOS ---
+
+// 1. Botón "Hoy"
+document.getElementById("btnVerHoy").addEventListener("click", () => {
+    cargarReservas('hoy');
+});
+
+// 2. Botón "Todo el mes"
+document.getElementById("btnVerMes").addEventListener("click", () => {
+    cargarReservas('mes');
+});
+
+
+// --- LISTENERS DE FILTROS AVANZADOS (Agregados anteriormente) ---
+
+
+// 5. Input de fecha 'Desde' y 'Hasta'
+// Se agregará un solo botón para ejecutar el filtro de rango
+const btnAplicarRango = document.createElement('button');
+btnAplicarRango.textContent = 'Aplicar Rango';
+btnAplicarRango.className = 'boton-accion'; // Puedes necesitar añadir estilos a esta clase
+btnAplicarRango.style.marginTop = '15px';
+btnAplicarRango.addEventListener('click', () => {
+    const desde = document.getElementById("fechaDesde").value;
+    const hasta = document.getElementById("fechaHasta").value;
+    
+    if (desde && hasta) {
+        // Limpiar la selección de mes al usar rango
+        document.getElementById("selectMes").value = '';
+        cargarReservas({ desde: desde, hasta: hasta });
+    } else {
+        alert("Por favor, selecciona tanto la Fecha Desde como la Fecha Hasta.");
+    }
+});
+// Inserta este botón en tu HTML debajo de los inputs de rango.
+
+
+        // Inicializar vista
+        mostrarSeccion("mesas");
+        // ===== ADMINS =====
+const listaAdmins = document.getElementById("listaAdmins");
+
+function mostrarFormularioAdmin() {
+    document.getElementById("formAdmin").style.display = "block";
+}
+
+async function cargarAdmins() {
+    try {
+        const res = await fetch("../php/listarAdmins.php");
+        if (!res.ok) throw new Error("Error al obtener datos del servidor.");
+        
+        const data = await res.json();
+        
+        if (Array.isArray(data)) {
+            admins = data;
+            return true;
+        } else {
+            console.error("Respuesta inesperada del servidor:", data);
+            listaAdmins.innerHTML = "<p>El servidor devolvió un formato de datos inesperado.</p>";
+            return false;
+        }
+    } catch (e) {
+        console.error("Error al cargar administradores", e);
+        listaAdmins.innerHTML = "<p>Error al cargar administradores. Verifica listarAdmins.php.</p>";
+        admins = [];
+        return false;
+    }
+}
+async function mostrarAdmins() {
+    listaAdmins.innerHTML = "<p>Cargando administradores...</p>";
+    const cargadoExitoso = await cargarAdmins();
+
+    if (!cargadoExitoso) return;
+
+    listaAdmins.innerHTML = "";
+
+    if (admins.length === 0) {
+        listaAdmins.innerHTML = "<p>No hay administradores registrados.</p>";
+        return;
+    }
+
+    admins.forEach((a) => {
+        const div = document.createElement("div");
+        div.classList.add("cliente-card");
+
+        div.innerHTML = `
+            <p><strong>Nombre:</strong> ${a.nombre}</p>
+            <p><strong>Mail:</strong> ${a.email}</p>
+            <p><strong>Teléfono:</strong> ${a.celular}</p>
+        `;
+
+        const accionesDiv = document.createElement("div");
+        accionesDiv.classList.add("cliente-acciones");
+
+        /* ✅ ADMIN FIJO (ID = 1) → SIN BOTONES */
+        if (parseInt(a.id_usuario) !== 1) {
+
+            accionesDiv.innerHTML = `
+                <button class="btn-editar"
+                    onclick="editarAdmin('${a.id_usuario}',
+                                         '${a.nombre}',
+                                         '${a.email}',
+                                         '${a.celular}')">
+                    Editar
+                </button>
+
+                <button class="btn-eliminar"
+                    onclick="eliminarAdmin('${a.id_usuario}','${a.nombre}')">
+                    Eliminar
+                </button>
+            `;
+        } else {
+            accionesDiv.innerHTML = `
+                <p style="color:#00b894; font-weight:bold; margin-top:8px;">
+                    Administrador principal
+                </p>
+            `;
+        }
+
+        div.appendChild(accionesDiv);
+        listaAdmins.appendChild(div);
+    });
+}
+async function eliminarAdmin(id_admin, nombre_admin) {
+
+    if (!confirm(`¿Seguro que desea eliminar al administrador ${nombre_admin}? Esta acción es irreversible.`)) {
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("id_usuario", id_admin); // ✅ CLAVE
+
+    try {
+        const res = await fetch("../php/eliminarAdmin.php", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert(`Administrador ${nombre_admin} eliminado con éxito.`);
+            mostrarAdmins();
+        } else {
+            alert("Error al eliminar: " + (data.message || "No se pudo eliminar."));
+        }
+    } catch (e) {
+        alert("Error de conexión al eliminar administrador.");
+        console.error(e);
+    }
+}
+async function editarAdmin(id_admin, nombre_actual, email_actual, celular_actual) {
+
+    const nuevoNombre = prompt(`Nuevo nombre para ${nombre_actual}:`, nombre_actual);
+    if (nuevoNombre === null) return;
+
+    const nuevoMail = prompt(`Nuevo email para ${nombre_actual}:`, email_actual);
+    if (nuevoMail === null) return;
+
+    const nuevoCelular = prompt(`Nuevo celular para ${nombre_actual}:`, celular_actual);
+    if (nuevoCelular === null) return;
+
+    const formData = new FormData();
+    formData.append("id_usuario", id_admin); // ✅ CLAVE
+    formData.append("nombre", nuevoNombre.trim());
+    formData.append("email", nuevoMail.trim());
+    formData.append("celular", nuevoCelular.trim());
+
+    try {
+        const res = await fetch("../php/editarAdmin.php", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert(`Administrador ${nuevoNombre} actualizado correctamente.`);
+            mostrarAdmins();
+        } else {
+            alert("Error al actualizar: " + (data.message || "Error desconocido."));
+        }
+    } catch (e) {
+        alert("Error de conexión al editar administrador.");
+        console.error(e);
+    }
+}
+
+
+
+    </script>
+    
+</body>
+</html>
