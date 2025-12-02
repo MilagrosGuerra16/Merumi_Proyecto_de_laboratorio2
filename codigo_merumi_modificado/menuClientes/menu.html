@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>Merumi | Turnero de Mesas</title>
+
+    <style>
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+
+
+
+        body {
+
+            background-image: url('../imagenes/mesa3.jpg');
+
+            background-size: cover;
+
+            background-position: center;
+
+            color: #f5f5f5;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            min-height: 100vh;
+
+        }
+
+
+
+        header {
+
+            width: 100%;
+
+            background-color: #001a33;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 10px 20px;
+
+        }
+
+
+
+        header img { height: 70px; object-fit: contain; }
+
+
+
+        #cerrarSesion {
+
+            background-color: #b22222;
+
+            color: white;
+
+            border: none;
+
+            padding: 10px 20px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            transition: background-color 0.2s;
+
+        }
+
+        #cerrarSesion:hover { background-color: #a11a1a; }
+
+
+
+        nav {
+
+            width: 100%;
+
+            background: #011930;
+
+            display: flex;
+
+            justify-content: center;
+
+            padding: 10px;
+
+        }
+
+
+
+        nav ul {
+
+            list-style: none;
+
+            display: flex;
+
+            gap: 40px;
+
+        }
+
+
+
+        nav ul li a {
+
+            color: white;
+
+            text-decoration: none;
+
+            font-weight: bold;
+
+        }
+
+
+
+        nav ul li a:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+
+        h1 { margin: 30px 0 15px 0; }
+
+
+
+        .main-container {
+
+            display: flex;
+
+            flex-direction: row;
+
+            gap: 20px;
+
+            align-items: flex-start;
+
+            justify-content: center;
+
+        }
+
+
+
+        .plano {
+
+            display: grid;
+
+            grid-template-columns: repeat(4, 100px);
+
+            grid-gap: 20px;
+
+            background-color: rgba(16, 47, 71, 0.95);
+
+            padding: 20px;
+
+            border-radius: 15px;
+
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+
+        }
+
+
+
+        .mesa {
+
+            background-color: #1f4e6d;
+
+            border-radius: 10px;
+
+            padding: 15px;
+
+            text-align: center;
+
+            cursor: pointer;
+
+            transition: transform 0.2s, background-color 0.2s;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            color: #fff;
+
+            user-select: none;
+
+        }
+
+
+
+        .mesa:hover { transform: scale(1.05); }
+
+        .disponible { background-color: #1e7d32; } /* verde */
+
+        .reservado { background-color: #b85c00; }  /* naranja */
+
+
+
+        .mesa img {
+
+            width: 50px;
+
+            height: 50px;
+
+            object-fit: contain;
+
+            margin-bottom: 5px;
+
+        }
+
+.sidebar {
+
+    display: flex; 
+
+    flex-direction: column; 
+
+    align-items: center; 
+
+    width: 300px; 
+
+    /* ❗ IMPORTANTE: Añade espaciado vertical entre los paneles */
+
+    gap: 15px; /* Define el espacio entre #mensajePanel, #seleccionFechaTurno, y #infoMesa */
+
+}
+
+        #mensajePanel {
+
+    /* Mismo aspecto que los otros paneles */
+
+    background-color: rgba(31, 78, 109, 0.95);
+
+    border-radius: 10px;
+
+    padding: 8px;
+
+    width: 100%; /* Ocupa todo el ancho del sidebar (300px) */
+
+    
+
+    /* Estilos para el texto */
+
+    color: #f5f5f5;
+
+    text-align: center;
+
+    font-weight: bold; /* Le da más prominencia */
+
+    font-size: 1.1em;
+
+    line-height: 1.3;
+
+    
+
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+}
+
+        #seleccionFechaTurno {
+
+            background-color: rgba(31,78,109,0.95);
+
+            border-radius: 10px;
+
+            padding: 20px;
+
+            width: 300px;
+
+            margin-bottom: 0px;
+
+            text-align: left;
+
+            display: block;
+
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+        }
+
+
+
+        #seleccionFechaTurno label, #infoMesa label {
+
+             display:block;
+
+             margin-top:8px;
+
+             font-size:0.9rem;
+
+        }
+
+
+
+        #seleccionFechaTurno input[type="date"], #seleccionFechaTurno select {
+
+            width: 100%;
+
+            padding: 8px;
+
+            margin-top: 5px;
+
+            border-radius: 5px;
+
+            border: 1px solid #ccc;
+
+        }
+
+
+
+        #infoMesa {
+
+            background-color: rgba(31,78,109,0.95);
+
+            border-radius: 10px;
+
+            padding: 20px;
+
+            width: 300px;
+
+            /* text-align: center; <-- Se reemplaza por align-items: center */
+
+            display: none;
+
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+            
+
+            /* 🚀 MODIFICACIONES CLAVE PARA CENTRAR EL BOTÓN RESERVAR */
+
+            display: flex; 
+
+            flex-direction: column;
+
+            align-items: center; /* Centra horizontalmente todo el contenido (texto y botón) */
+
+        }
+
+
+
+        #infoMesa h2 { margin-bottom: 10px; }
+
+        #infoMesa p { margin: 6px 0; }
+
+        #infoMesa label { display:block; margin-top:8px; text-align:left; font-size:0.9rem; }
+
+
+
+        button {
+
+            background-color: #00b894;
+
+            color: white;
+
+            border: none;
+
+            padding: 10px 20px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            transition: background-color 0.2s;
+
+            margin-top: 10px;
+
+        }
+
+
+
+        button:hover { background-color: #009e7d; }
+
+
+
+        section#mesas {
+
+            margin-top: 30px;
+
+            background-color: rgba(16, 47, 71, 0.95);
+
+            border-radius: 15px;
+
+            padding: 20px;
+
+            max-width: fit-content;
+
+            margin-left: auto;
+
+            margin-right: auto;
+
+            text-align: center;
+
+            display: block;
+
+        }
+
+
+
+        section#reservas {
+
+             margin-top: 30px;
+
+             background-color: rgba(16, 47, 71, 0.95);
+
+             border-radius: 15px;
+
+             padding: 20px;
+
+             width: 85%;
+
+             max-width: 900px;
+
+             margin-left: auto;
+
+             margin-right: auto;
+
+             text-align: center;
+
+             display: none;
+
+        }
+
+
+
+        .reserva-card {
+
+            /* 🚀 MODIFICACIONES CLAVE PARA CENTRAR EL BOTÓN CANCELAR */
+
+            display: inline-flex; /* Usar inline-flex */
+
+            flex-direction: column; /* Apilar elementos verticalmente */
+
+            align-items: center; /* Centra horizontalmente todo el contenido */
+
+            text-align: center; /* Centra el texto dentro de los párrafos */
+
+            
+
+            background-color: #123450;
+
+            border-radius: 10px;
+
+            padding: 10px 20px;
+
+            margin: 10px;
+
+            width: 220px;
+
+            /* text-align: left; <-- Eliminado/Reemplazado para centrar */
+
+            color: #f0f0f0;
+
+        }
+
+
+
+        .reserva-card button {
+
+            background-color: #e74c3c;
+
+        }
+
+
+
+        .reserva-card button:hover {
+
+            background-color: #c0392b;
+
+        }
+
+
+
+        footer {
+
+            margin-top: 50px;
+
+            color: #8ca2c0;
+
+            font-size: 0.9rem;
+
+        }
+
+
+
+        @media (max-width: 850px) {
+
+            section#mesas { max-width: 95%; padding: 10px; }
+
+            .main-container { flex-direction: column; align-items: center; }
+
+            .plano, #seleccionFechaTurno, #infoMesa { width: 95%; max-width: 450px; }
+
+            .plano { grid-template-columns: repeat(3, 100px); }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <img src="../imagenes/banner1.0.png" alt="Merumi">
+
+        <button id="cerrarSesion">Cerrar sesión</button>
+
+    </header>
+
+
+
+    <nav>
+
+        <ul>
+
+            <li><a href="#" onclick="mostrarSeccion('mesas')">Ver Mesas</a></li>
+
+            <li><a href="#" onclick="mostrarSeccion('reservas')">Mis Reservas</a></li>
+
+        </ul>
+
+    </nav>
+
+
+
+    <h1>Panel del Cliente</h1>
+
+
+
+    <section id="mesas">
+
+        
+
+        <div class="main-container">
+
+
+
+            <div class="plano" id="contenedorMesas"></div>
+
+
+
+            <div class="sidebar">
+
+                
+
+                <div id="mensajePanel">
+
+                    Seleccione fecha y turno para ver mesas disponibles
+
+                </div>
+
+
+
+                <div id="seleccionFechaTurno">
+
+                    <label for="fecha">Fecha de reserva</label>
+
+
+                    <input type="date" id="fecha" />
+
+
+
+                    <label for="turno">Turno</label>
+
+
+                    <select id="turno">
+
+                        <option value="">Seleccione turno</option>
+
+                    </select>
+                    <label style="margin-top:12px;">
+    <input type="checkbox" id="multiReserva">
+    Hacer reserva múltiple
+</label>
+
+                </div>
+
+                <div id="infoMesa">
+
+                    <h3>Información de la Mesa</h3>
+<div id="detalleMesas"></div>
+
+
+
+
+                    <button id="btnReservar">Reservar</button>
+
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+    </section>
+
+
+
+    <section id="reservas">
+
+        <h2>Mis Reservas</h2>
+
+        <p id="sinReservas">No hay reservas registradas.</p>
+
+        <div id="listaReservas"></div>
+
+    </section>
+
+
+
+    <footer>© 2025 - Merumi | Sistema de reservas</footer>
+
+
+
+    <script>
+
+        const imagenMesa = "../imagenes/mesalogo.png";
+
+
+
+        let mesas = [];
+
+        let mesaSeleccionada = null;
+
+        const detalleMesas = document.getElementById("detalleMesas");
+
+        const chkMulti = document.getElementById("multiReserva");
+            let mesasSeleccionadas = [];
+
+
+        const contenedor = document.getElementById("contenedorMesas");
+
+        const info = document.getElementById("infoMesa");
+
+        const btnReservar = document.getElementById("btnReservar");
+
+        const selectTurno = document.getElementById("turno");
+
+        const inputFecha = document.getElementById("fecha");
+
+        const listaReservas = document.getElementById("listaReservas");
+
+        const sinReservas = document.getElementById("sinReservas");
+
+
+
+        // Cargar turnos desde DB 
+        async function cargarTurnos() {
+
+            try {
+
+                const res = await fetch("../php/listarTurnos.php");
+
+                const data = await res.json();
+
+
+
+                // limpia y agrega opciones
+
+                selectTurno.innerHTML = '<option value="">Seleccione turno</option>';
+
+                data.forEach(t => {
+
+
+                    const id = t.id_turnos ?? t.id_turno ?? t.id;
+
+                    const txt = (t.nombre ?? ("Turno " + id)) + (t.inicio_hora ? ` (${t.inicio_hora.slice(0,5)} - ${t.fin_hora.slice(0,5)})` : '');
+
+                    const opt = document.createElement("option");
+
+                    opt.value = id;
+
+                    opt.textContent = txt;
+
+                    selectTurno.appendChild(opt);
+
+                });
+
+            } catch (e) {
+
+                selectTurno.innerHTML = '<option value="">Error cargando turnos</option>';
+
+            }
+
+        }
+
+
+
+        // Cargar todas las mesas en modo inicial (todas verdes)
+
+        async function cargarMesasIniciales() {
+
+            try {
+
+
+                const res = await fetch("../php/listarMesas.php");
+
+                const data = await res.json();
+
+
+
+//mesas libre forzar
+                mesas = data.map(m => ({ ...m, estado: 'libre' }));
+
+                renderizarMesas();
+
+            } catch (e) {
+
+                console.error("Error al cargar mesas iniciales", e);
+
+            }
+
+        }
+
+
+
+        // Cargar mesas según fecha + turno
+
+        async function cargarMesasFiltradas() {
+
+            const fecha = inputFecha.value;
+
+            const id_turno = selectTurno.value;
+
+
+
+            if (!fecha || !id_turno) {
+
+                // si no hay ambos, mostramos todas verdes
+
+                cargarMesasIniciales();
+
+                return;
+
+            }
+
+
+
+            try {
+
+                const res = await fetch(`../php/listarMesas.php?fecha=${encodeURIComponent(fecha)}&id_turno=${encodeURIComponent(id_turno)}`);
+
+                const data = await res.json();
+
+                mesas = data.map(m => {
+
+                    const est = (m.estado ?? '').toString().toLowerCase();
+
+                    const clase = (est === 'libre') ? 'disponible' : 'reservado';
+
+                    return { ...m, _clase: clase, estado: est };
+
+                });
+
+
+
+                renderizarMesas();
+
+            } catch (e) {
+
+                console.error("Error al cargar mesas filtradas", e);
+
+            }
+
+        }
+
+
+
+        // Renderizar mesas en el grid 
+
+        function renderizarMesas() {
+
+            contenedor.innerHTML = "";
+
+
+
+            mesas.forEach(m => {
+
+                const div = document.createElement("div");
+
+                div.className = "mesa";
+
+                const classeVisual = m._clase ?? ((m.estado && m.estado.toLowerCase() === 'libre') ? 'disponible' : 'reservado');
+
+                div.classList.add(classeVisual);
+
+
+
+                // contenido
+
+                div.innerHTML = `
+
+                    <img src="${imagenMesa}" alt="Mesa ${m.nombre}">
+
+                    <span>Mesa ${m.nombre}</span>
+
+                `;
+
+
+
+                // si está ocupada/reservada: no clickable
+
+                div.addEventListener("click", () => {
+    if (!chkMulti.checked) {
+        mostrarInfo(m);
+        return;
+    }
+
+    if (div.classList.contains("reservado")) return;
+
+    const id = m.id_mesa ?? m.id_mesas ?? m.id;
+
+    if (mesasSeleccionadas.includes(id)) {
+        mesasSeleccionadas = mesasSeleccionadas.filter(x => x !== id);
+        div.style.outline = "none";
+    } else {
+        mesasSeleccionadas.push(id);
+        div.style.outline = "3px solid #00ff99";
+    }
+
+    
+    mostrarInfoMultiple();
+
+});
+
+                
+
+                // Si está reservada, solo cambiamos el cursor visualmente
+
+                if (classeVisual === 'reservado') {
+
+                    div.style.cursor = "pointer"; // o "default" si no quieres el pointer
+
+                }
+
+
+
+                contenedor.appendChild(div);
+
+            });
+
+        }
+
+
+//mostrar info
+
+function mostrarInfoMultiple() {
+
+    info.style.display = "flex";
+    detalleMesas.innerHTML = "";
+
+    mesasSeleccionadas.forEach(id => {
+        const mesa = mesas.find(m =>
+            (m.id_mesa ?? m.id_mesas ?? m.id) === id
+        );
+
+        if (!mesa) return;
+
+        const bloque = document.createElement("div");
+        bloque.style.borderTop = "1px solid #ffffff55";
+        bloque.style.marginTop = "10px";
+        bloque.style.paddingTop = "10px";
+
+        bloque.innerHTML = `
+            <p><strong>Mesa:</strong> ${mesa.nombre}</p>
+            <p><strong>Estado:</strong> Disponible</p>
+            <p><strong>Capacidad:</strong> ${mesa.capacidad ?? "-"} personas</p>
+        `;
+
+        detalleMesas.appendChild(bloque);
+    });
+
+    btnReservar.style.display = "block";
+    btnReservar.textContent = `Reservar ${mesasSeleccionadas.length} mesas`;
+    btnReservar.onclick = reservarMesa;
+}
+
+
+function mostrarInfo(mesa) {
+
+    mesaSeleccionada = mesa;
+    info.style.display = "flex";
+    detalleMesas.innerHTML = ""; // limpiar panel
+
+    const estadoVisual = (mesa.estado || 'libre').toLowerCase();
+    const disponible = (estadoVisual === 'libre' || estadoVisual === 'disponible');
+
+    detalleMesas.innerHTML = `
+        <p><strong>Mesa:</strong> ${mesa.nombre}</p>
+        <p><strong>Estado:</strong> ${disponible ? "Disponible" : "Reservada"}</p>
+        <p><strong>Capacidad:</strong> ${mesa.capacidad ?? "-"} personas</p>
+    `;
+
+    if (disponible) {
+        btnReservar.style.display = "block";
+        btnReservar.textContent = "Reservar";
+        btnReservar.onclick = reservarMesa;
+        btnReservar.disabled = false;
+    } else {
+        btnReservar.style.display = "none";
+        btnReservar.onclick = null;
+    }
+}
+
+
+//reserva
+        async function reservarMesa() {
+
+    const fecha = inputFecha.value;
+    const id_turno = selectTurno.value;
+
+    if (!fecha) { alert("Seleccione una fecha."); return; }
+    if (!id_turno) { alert("Seleccione un turno."); return; }
+
+    /* ✅ MULTI */
+    if (chkMulti.checked) {
+
+        if (mesasSeleccionadas.length === 0) {
+            alert("Seleccione al menos una mesa");
+            return;
+        }
+
+        const payload = {
+            id_mesas: mesasSeleccionadas,
+            fecha,
+            id_turno: parseInt(id_turno),
+            tipo_reserva: "admin"
+        };
+
+        const res = await fetch("../php/crearMultipleReserva.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+
+        if (json.success) {
+            alert("Reservas creadas correctamente");
+            mesasSeleccionadas = [];
+            cargarMesasFiltradas();
+        } else {
+            alert("Error: " + json.error);
+        }
+
+        return;
+    }
+
+    
+    const payload = {
+        id_mesa: mesaSeleccionada.id_mesa ?? mesaSeleccionada.id,
+        fecha,
+        id_turno: parseInt(id_turno),
+        tipo_reserva: "admin"
+    };
+
+    const res = await fetch("../php/crearReserva.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const json = await res.json();
+
+    if (json.success) {
+        alert("Reserva creada");
+        cargarMesasFiltradas();
+    } else {
+        alert("Error: " + json.error);
+    }
+}
+
+
+
+        // Mostrar reservas del usuario
+
+        function mostrarReservas() {
+
+            fetch("../php/listarReservas.php")
+
+            .then(res => res.json())
+
+            .then(data => {
+
+                listaReservas.innerHTML = "";
+
+
+
+                if (!Array.isArray(data) || data.length === 0) {
+
+                    sinReservas.style.display = "block";
+
+                    return;
+
+                }
+
+
+
+                sinReservas.style.display = "none";
+
+
+
+                data.forEach(reserva => {
+
+                    const div = document.createElement("div");
+
+                    div.classList.add("reserva-card");
+
+
+
+                    div.innerHTML = `
+
+                        <p><strong>Mesa:</strong> ${reserva.nombre_mesa}</p>
+
+                        <p><strong>Fecha:</strong> ${reserva.fecha}</p>
+
+                        <p><strong>Turno:</strong> ${reserva.nombre_turno}</p>
+
+                        <button onclick="cancelarReserva(${reserva.id_reserva}, ${reserva.id_mesa})">
+
+                            Cancelar Reserva
+
+                        </button>
+
+                    `;
+
+                    listaReservas.appendChild(div);
+
+                });
+
+            })
+
+            .catch(e => {
+
+                console.error("Error al listar reservas", e);
+
+                listaReservas.innerHTML = "<p>Error al cargar reservas.</p>";
+
+            });
+
+        }
+
+
+
+        // Cancelar reserva 
+
+        function cancelarReserva(id_reserva, id_mesa) {
+
+            if (!confirm("¿Está seguro que desea cancelar la reserva?")) return;
+
+
+
+            const formData = new FormData();
+
+            formData.append("id_reserva", id_reserva);
+
+            formData.append("id_mesa", id_mesa);
+
+
+
+            fetch("../php/cancelarReserva.php", {
+
+                method: "POST",
+
+                body: formData
+
+            })
+
+                .then(res => res.json())
+
+                .then(data => {
+
+                    if (data.success) {
+
+                        alert("Reserva cancelada con éxito.");
+
+                        mostrarReservas();
+
+                        mostrarSeccion("mesas");
+
+                        // recargar mesas filtradas
+
+                        cargarMesasFiltradas();
+
+                    } else {
+
+                        alert("Error: " + (data.message || "No se pudo cancelar."));
+
+                    }
+
+                })
+
+                .catch(() => alert("Error en el servidor."));
+
+        }
+
+
+chkMulti.addEventListener("change", () => {
+    mesasSeleccionadas = [];
+    detalleMesas.innerHTML = "";
+    btnReservar.style.display = "none";
+
+    document.querySelectorAll(".mesa").forEach(m => {
+        m.style.outline = "none";
+    });
+});
+
+        // Cerrar sesión
+
+        document.getElementById("cerrarSesion").addEventListener("click", () => {
+
+            if (!confirm("¿Seguro que desea cerrar sesión?")) return;
+
+
+
+            fetch("../php/cerrarSesion.php")
+
+                .then(res => res.json())
+
+                .then(data => {
+
+                    if (data.success) {
+
+                        window.location.href = "../inicio/iniciarSesion.html";
+
+                    } else {
+
+                        alert("Error al cerrar sesión.");
+
+                    }
+
+                })
+
+                .catch(() => alert("Error al conectar con el servidor."));
+
+        });
+
+
+
+        // Mostrar/ocultar secciones
+
+        function mostrarSeccion(id) {
+
+            document.querySelectorAll("section").forEach(s => s.style.display = "none");
+
+            document.getElementById(id).style.display = "block";
+
+
+
+            if (id === "mesas") {
+
+                // cargar turnos y mostrar todas verdes hasta que el usuario filtre
+
+                cargarTurnos();
+
+                cargarMesasIniciales();
+
+                info.style.display = "none";
+
+                mesaSeleccionada = null;
+
+            }
+
+            if (id === "reservas") {
+
+                mostrarReservas();
+
+            }
+
+        }
+
+
+
+        // Listeners para cambios de fecha/turno -> filtrar
+
+        inputFecha.addEventListener("change", cargarMesasFiltradas);
+
+        selectTurno.addEventListener("change", cargarMesasFiltradas);
+
+
+
+        // Inicializar vista
+
+        mostrarSeccion("mesas");
+
+    </script>
+
+</body>
+
+</html>
+
